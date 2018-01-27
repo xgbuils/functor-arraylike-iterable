@@ -19,12 +19,19 @@ Object.defineProperties(FunctorArrayLikeIterable.prototype, {
         value: map
     },
     [Symbol.iterator]: {
-        * value () {
+        value () {
             const fs = this.fs
             const iterable = this.iterable
             const length = iterable.length
-            for (let i = 0; i < length; ++i) {
-                yield fs.reduce(apply, iterable[i])
+            let i = 0
+            return {
+                next () {
+                    const status = i < length ? {
+                        value: fs.reduce(apply, iterable[i])
+                    } : {done: true}
+                    ++i
+                    return status
+                }
             }
         }
     }
